@@ -6,7 +6,12 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint:prettier": "prettier --check 'src/**/*.{ts,tsx}' *.md",
+    "format:prettier": "prettier --write 'src/**/*.{ts,tsx}' *.md",
+    "lint:eslint": "next lint",
+    "format:eslint": "next lint --fix .",
+    "lint": "npm run lint:prettier && npm run lint:eslint",
+    "format": "npm run format:prettier && npm run format:eslint"
   },
   "dependencies": {
     "@types/node": "20.4.7",
