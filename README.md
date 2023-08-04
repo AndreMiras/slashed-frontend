@@ -5,9 +5,15 @@
 
 ## Getting Started
 
-First, run the development server:
+Copy/edit the .env.local file:
 
-```bash
+```sh
+cp .env.local.example .env.local
+```
+
+Then run the development server:
+
+```sh
 npm run dev
 ```
 
