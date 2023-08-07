@@ -17,7 +17,7 @@ const SlashingEvents = ({ slashingEvents }: SlashingEventsProps) => (
               {slashingEvent.chains.name}
             </Link>
             ; address: {slashingEvent.address}; block:{" "}
-            {slashingEvent.block_height}
+            {slashingEvent.block_height}; reason: {slashingEvent.reason}
           </li>
         ))}
       </ul>
