@@ -46,6 +46,7 @@ const selectChain = async (name: string) => {
  */
 const getSlashingEvents = async (
   chainName?: string,
+  address?: string,
 ): Promise<ExtendedSlashingEventsRow[]> => {
   const cookieStore = cookies();
   const supabase = createServerComponentClient<Database>({
@@ -59,6 +60,9 @@ const getSlashingEvents = async (
   if (chainName) {
     const { id: chainId } = await selectChain(chainName);
     query = query.eq("chain_id", chainId);
+  }
+  if (address) {
+    query = query.eq("address", address);
   }
   const { data, error } = await query;
   const extendedData = data as ExtendedSlashingEventsRow[];
