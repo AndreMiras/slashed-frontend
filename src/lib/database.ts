@@ -3,6 +3,10 @@ import { PostgrestError } from "@supabase/supabase-js";
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 import { Database } from "@/lib/database.types";
 
+type SlashingEventsRow = Database["public"]["Tables"]["slashing_events"]["Row"];
+type ChainsRow = Database["public"]["Tables"]["chains"]["Row"];
+type ExtendedSlashingEventsRow = SlashingEventsRow & { chains: ChainsRow };
+
 const isPostgrestError = (error: any): error is PostgrestError => {
   return (
     error &&
@@ -40,19 +44,27 @@ const selectChain = async (name: string) => {
 /**
  * Get chain specific slashing events or all of them if chainName not specified.
  */
-const getSlashingEvents = async (chainName?: string) => {
+const getSlashingEvents = async (
+  chainName?: string,
+): Promise<ExtendedSlashingEventsRow[]> => {
   const cookieStore = cookies();
   const supabase = createServerComponentClient<Database>({
     cookies: () => cookieStore,
   });
-  let query = supabase.from("slashing_events").select();
+  let query = supabase.from("slashing_events").select(`
+    *,
+    chains (
+      name
+    )`);
   if (chainName) {
     const { id: chainId } = await selectChain(chainName);
     query = query.eq("chain_id", chainId);
   }
   const { data, error } = await query;
+  const extendedData = data as ExtendedSlashingEventsRow[];
   handlePostgrestError(error);
-  return data!;
+  return extendedData!;
 };
 
+export type { ExtendedSlashingEventsRow };
 export { isPostgrestError, selectChain, getSlashingEvents };

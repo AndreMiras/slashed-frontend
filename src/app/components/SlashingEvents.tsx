@@ -1,7 +1,9 @@
+import Link from "next/link";
+import { ExtendedSlashingEventsRow } from "@/lib/database";
 import { Database } from "@/lib/database.types";
 
 interface SlashingEventsProps {
-  slashingEvents: Database["public"]["Tables"]["slashing_events"]["Row"][];
+  slashingEvents: ExtendedSlashingEventsRow[];
 }
 
 const SlashingEvents = ({ slashingEvents }: SlashingEventsProps) => (
@@ -10,7 +12,11 @@ const SlashingEvents = ({ slashingEvents }: SlashingEventsProps) => (
       <ul className="my-auto">
         {slashingEvents.map((slashingEvent) => (
           <li key={slashingEvent.id}>
-            address: {slashingEvent.address}; block:{" "}
+            chain:{" "}
+            <Link href={`/${slashingEvent.chains.name}`}>
+              {slashingEvent.chains.name}
+            </Link>
+            ; address: {slashingEvent.address}; block:{" "}
             {slashingEvent.block_height}
           </li>
         ))}
