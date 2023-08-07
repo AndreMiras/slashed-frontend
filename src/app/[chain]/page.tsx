@@ -6,14 +6,14 @@ import SlashingEvents from "@/app/components/SlashingEvents";
 
 interface PageProps {
   params: {
-    slug: string;
+    chain: string;
   };
 }
 
 const Page = async ({ params }: PageProps) => {
   let slashingEvents = [];
   try {
-    slashingEvents = await getSlashingEvents(params.slug);
+    slashingEvents = await getSlashingEvents(params.chain);
   } catch (error) {
     // most likely an unsupported chain
     if (isPostgrestError(error) && error.code === "PGRST116") {
@@ -24,7 +24,7 @@ const Page = async ({ params }: PageProps) => {
   }
   return (
     <>
-      <h2>{params.slug} Slashing Events</h2>
+      <h2>{params.chain} Slashing Events</h2>
       <SlashingEvents slashingEvents={slashingEvents} />
     </>
   );
