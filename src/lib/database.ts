@@ -42,6 +42,22 @@ const selectChain = async (name: string) => {
 };
 
 /**
+ * Returns a single chain row given a chain name.
+ */
+const selectChains = async () => {
+  const cookieStore = cookies();
+  const supabase = createServerComponentClient<Database>({
+    cookies: () => cookieStore,
+  });
+  const { data, error } = await supabase
+    .from("chains")
+    .select("*")
+    .order("name");
+  handlePostgrestError(error);
+  return data!;
+};
+
+/**
  * Get chain specific slashing events or all of them if chainName not specified.
  */
 const getSlashingEvents = async (
@@ -71,4 +87,4 @@ const getSlashingEvents = async (
 };
 
 export type { ExtendedSlashingEventsRow };
-export { isPostgrestError, selectChain, getSlashingEvents };
+export { isPostgrestError, selectChain, selectChains, getSlashingEvents };

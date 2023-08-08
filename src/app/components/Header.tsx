@@ -1,7 +1,11 @@
 import Link from "next/link";
-import HeaderLink from "@/app/components/HeaderLink";
+import HeaderLinks from "@/app/components/HeaderLinks";
 
-const Header = () => (
+interface HeaderProps {
+  chains: string[];
+}
+
+const Header = ({ chains }: HeaderProps) => (
   // <!-- Top Navigation Menu -->
   <header className="py-4 h-24">
     <nav className="flex items-center justify-between flex-wrap text-yellow-300 h-full">
@@ -16,13 +20,10 @@ const Header = () => (
       {/* <!-- Navigation Links --> */}
       <div className="flex border-y border-yellow-300 h-full items-center">
         <div className="text-sm lg:flex-grow">
-          <HeaderLink text="All" href="/" />
-          <HeaderLink text="Canto" href="/canto" />
-          <HeaderLink text="Kujira" href="/kujira" last />
+          <HeaderLinks chains={chains} />
         </div>
       </div>
     </nav>
   </header>
 );
-
 export default Header;

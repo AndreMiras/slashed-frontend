@@ -24,7 +24,7 @@ const Page = async ({ params }: PageProps) => {
   }
   return (
     <>
-      <h2>{params.chain} Slashing Events</h2>
+      <h2 className="capitalize">{params.chain} Slashing Events</h2>
       <SlashingEvents slashingEvents={slashingEvents} />
     </>
   );
