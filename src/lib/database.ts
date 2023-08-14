@@ -5,7 +5,11 @@ import { Database } from "@/lib/database.types";
 
 type SlashingEventsRow = Database["public"]["Tables"]["slashing_events"]["Row"];
 type ChainsRow = Database["public"]["Tables"]["chains"]["Row"];
-type ExtendedSlashingEventsRow = SlashingEventsRow & { chains: ChainsRow };
+type BlocksRow = Database["public"]["Tables"]["blocks"]["Row"];
+type ExtendedSlashingEventsRow = SlashingEventsRow & {
+  chains: ChainsRow;
+  blocks: BlocksRow;
+};
 
 const isPostgrestError = (error: any): error is PostgrestError => {
   return (
@@ -68,11 +72,19 @@ const getSlashingEvents = async (
   const supabase = createServerComponentClient<Database>({
     cookies: () => cookieStore,
   });
-  let query = supabase.from("slashing_events").select(`
+  let query = supabase
+    .from("slashing_events")
+    .select(
+      `
     *,
     chains (
       name
-    )`);
+    ),
+    blocks (
+      time
+    )`,
+    )
+    .order("blocks(time)", { ascending: false });
   if (chainName) {
     const { id: chainId } = await selectChain(chainName);
     query = query.eq("chain_id", chainId);

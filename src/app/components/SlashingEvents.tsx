@@ -23,8 +23,8 @@ const SlashingEvents = ({ slashingEvents }: SlashingEventsProps) => (
               href={`/${slashingEvent.chains.name}/${slashingEvent.address}`}
               text={slashingEvent.address}
             />
-            ; block: {slashingEvent.block_height}; reason:{" "}
-            {slashingEvent.reason}
+            ; block: {slashingEvent.block_height}; time:{" "}
+            {slashingEvent.blocks.time}; reason: {slashingEvent.reason}
           </li>
         ))}
       </ul>
