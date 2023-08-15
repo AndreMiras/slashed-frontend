@@ -20,7 +20,7 @@ const SlashingEvents = ({ slashingEvents }: SlashingEventsProps) => (
             />
             ; address:{" "}
             <SlashingEventLink
-              href={`/${slashingEvent.chains.name}/${slashingEvent.address}`}
+              href={`/${slashingEvent.chains.name}/address/${slashingEvent.address}`}
               text={slashingEvent.address}
             />
             ; block: {slashingEvent.block_height}; time:{" "}
