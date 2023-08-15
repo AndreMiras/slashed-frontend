@@ -13,7 +13,8 @@ interface PageProps {
 const Page = async ({ params }: PageProps) => {
   let slashingEvents = [];
   try {
-    slashingEvents = await getSlashingEvents(params.chain);
+    const { chain: chainName } = params;
+    slashingEvents = await getSlashingEvents({ chainName });
   } catch (error) {
     // most likely an unsupported chain
     if (isPostgrestError(error) && error.code === "PGRST116") {

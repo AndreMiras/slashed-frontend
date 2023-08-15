@@ -64,10 +64,15 @@ const selectChains = async () => {
 /**
  * Get chain specific slashing events or all of them if chainName not specified.
  */
-const getSlashingEvents = async (
-  chainName?: string,
-  address?: string,
-): Promise<ExtendedSlashingEventsRow[]> => {
+const getSlashingEvents = async ({
+  chainName = "",
+  address = "",
+  block = 0,
+}: {
+  chainName?: string;
+  address?: string;
+  block?: number;
+} = {}): Promise<ExtendedSlashingEventsRow[]> => {
   const cookieStore = cookies();
   const supabase = createServerComponentClient<Database>({
     cookies: () => cookieStore,
@@ -91,6 +96,9 @@ const getSlashingEvents = async (
   }
   if (address) {
     query = query.eq("address", address);
+  }
+  if (block) {
+    query = query.eq("block_height", block);
   }
   const { data, error } = await query;
   const extendedData = data as ExtendedSlashingEventsRow[];
