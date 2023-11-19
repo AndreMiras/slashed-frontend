@@ -7,6 +7,13 @@ interface SlashingEventsProps {
   slashingEvents: ExtendedSlashingEventsRow[];
 }
 
+/**
+ * Default to `slashing_events.address` (valoper) if the `validators.valoper_address`
+ * isn't yet populated.
+ */
+const validatorAddress = (slashingEvent: ExtendedSlashingEventsRow) =>
+  slashingEvent.validators.valoper_address || slashingEvent.address;
+
 const SlashingEvents = ({ slashingEvents }: SlashingEventsProps) => (
   <table className="w-full text-sm text-left rtl:text-right text-neutral-500 dark:text-neutral-400">
     <thead className="text-xs text-neutral-700 uppercase bg-neutral-50 dark:bg-neutral-700 dark:text-neutral-400">
@@ -48,14 +55,18 @@ const SlashingEvents = ({ slashingEvents }: SlashingEventsProps) => (
           </th>
           <td className="px-6 py-4">
             <SlashingEventLink
-              href={`/${slashingEvent.chains.name}/address/${slashingEvent.validators.valoper_address}`}
+              href={`/${slashingEvent.chains.name}/address/${validatorAddress(
+                slashingEvent,
+              )}`}
               text={slashingEvent.validators.moniker}
             />
           </td>
           <td className="px-6 py-4">
             <SlashingEventLink
-              href={`/${slashingEvent.chains.name}/address/${slashingEvent.validators.valoper_address}`}
-              text={slashingEvent.validators.valoper_address}
+              href={`/${slashingEvent.chains.name}/address/${validatorAddress(
+                slashingEvent,
+              )}`}
+              text={validatorAddress(slashingEvent)}
             />
           </td>
           <td className="px-6 py-4">
