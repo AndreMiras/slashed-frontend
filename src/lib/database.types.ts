@@ -104,6 +104,12 @@ export interface Database {
         };
         Relationships: [
           {
+            foreignKeyName: "slashing_events_address_fkey";
+            columns: ["address"];
+            referencedRelation: "validators";
+            referencedColumns: ["valcons_address"];
+          },
+          {
             foreignKeyName: "slashing_events_chain_id_block_height_fkey";
             columns: ["chain_id", "block_height"];
             referencedRelation: "blocks";
@@ -136,6 +142,43 @@ export interface Database {
         Relationships: [
           {
             foreignKeyName: "sync_statuses_chain_id_fkey";
+            columns: ["chain_id"];
+            referencedRelation: "chains";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      validators: {
+        Row: {
+          account_address: string;
+          chain_id: number;
+          consensus_pubkey: string;
+          id: number;
+          moniker: string;
+          valcons_address: string | null;
+          valoper_address: string;
+        };
+        Insert: {
+          account_address: string;
+          chain_id: number;
+          consensus_pubkey: string;
+          id?: never;
+          moniker: string;
+          valcons_address?: string | null;
+          valoper_address: string;
+        };
+        Update: {
+          account_address?: string;
+          chain_id?: number;
+          consensus_pubkey?: string;
+          id?: never;
+          moniker?: string;
+          valcons_address?: string | null;
+          valoper_address?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "validators_chain_id_fkey";
             columns: ["chain_id"];
             referencedRelation: "chains";
             referencedColumns: ["id"];

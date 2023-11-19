@@ -6,9 +6,11 @@ import { Database } from "@/lib/database.types";
 type SlashingEventsRow = Database["public"]["Tables"]["slashing_events"]["Row"];
 type ChainsRow = Database["public"]["Tables"]["chains"]["Row"];
 type BlocksRow = Database["public"]["Tables"]["blocks"]["Row"];
+type ValidatorsRow = Database["public"]["Tables"]["validators"]["Row"];
 type ExtendedSlashingEventsRow = SlashingEventsRow & {
   chains: ChainsRow;
   blocks: BlocksRow;
+  validators: ValidatorsRow;
 };
 
 const isPostgrestError = (error: any): error is PostgrestError => {
@@ -87,6 +89,12 @@ const getSlashingEvents = async ({
     ),
     blocks (
       time
+    ),
+    validators!inner (
+      moniker,
+      account_address,
+      valoper_address,
+      valcons_address
     )`,
     )
     .order("blocks(time)", { ascending: false });
@@ -95,7 +103,10 @@ const getSlashingEvents = async ({
     query = query.eq("chain_id", chainId);
   }
   if (address) {
-    query = query.eq("address", address);
+    query = query.or(
+      `account_address.eq.${address},valoper_address.eq.${address},valcons_address.eq.${address}`,
+      { foreignTable: "validators" },
+    );
   }
   if (block) {
     query = query.eq("block_height", block);
@@ -106,5 +117,35 @@ const getSlashingEvents = async ({
   return extendedData!;
 };
 
+/**
+ * Returns validator details, address can be any of account, valoper or valcons.
+ */
+const getValidator = async ({
+  address,
+}: {
+  address: string;
+}): Promise<ValidatorsRow> => {
+  const cookieStore = cookies();
+  const supabase = createServerComponentClient<Database>({
+    cookies: () => cookieStore,
+  });
+  let query = supabase
+    .from("validators")
+    .select("*")
+    .or(
+      `account_address.eq.${address},valoper_address.eq.${address},valcons_address.eq.${address}`,
+    )
+    .single();
+  const { data, error } = await query;
+  handlePostgrestError(error);
+  return data!;
+};
+
 export type { ExtendedSlashingEventsRow };
-export { isPostgrestError, selectChain, selectChains, getSlashingEvents };
+export {
+  isPostgrestError,
+  selectChain,
+  selectChains,
+  getSlashingEvents,
+  getValidator,
+};
