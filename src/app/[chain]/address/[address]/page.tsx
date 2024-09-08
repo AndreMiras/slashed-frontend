@@ -7,20 +7,23 @@ import {
   getValidator,
 } from "@/lib/database";
 import SlashingEvents from "@/app/components/SlashingEvents";
+import Pagination from "@/app/components/Pagination";
 
 interface PageProps {
   params: {
     chain: string;
     address: string;
   };
+  searchParams: { page?: string };
 }
 
-const Page = async ({ params }: PageProps) => {
+const Page = async ({ params, searchParams }: PageProps) => {
   let slashingEvents = [];
   let validator;
+  const page = Number(searchParams.page) || 1;
   try {
     const { chain: chainName, address } = params;
-    slashingEvents = await getSlashingEvents({ chainName, address });
+    slashingEvents = await getSlashingEvents({ chainName, address, page });
     validator = await getValidator({ address });
   } catch (error) {
     // most likely an unsupported chain
@@ -49,6 +52,7 @@ const Page = async ({ params }: PageProps) => {
         <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex pt-8">
           <SlashingEvents slashingEvents={slashingEvents} />
         </div>
+        <Pagination page={page} />
       </main>
     </>
   );

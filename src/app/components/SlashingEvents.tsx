@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { ExtendedSlashingEventsRow } from "@/lib/database";
 import { Database } from "@/lib/database.types";
 import SlashingEventLink from "@/app/components/SlashingEventLink";

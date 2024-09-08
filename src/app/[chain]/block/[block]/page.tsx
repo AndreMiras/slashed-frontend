@@ -3,19 +3,22 @@ import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 import { Database } from "@/lib/database.types";
 import { isPostgrestError, getSlashingEvents } from "@/lib/database";
 import SlashingEvents from "@/app/components/SlashingEvents";
+import Pagination from "@/app/components/Pagination";
 
 interface PageProps {
   params: {
     chain: string;
     block: number;
   };
+  searchParams: { page?: string };
 }
 
-const Page = async ({ params }: PageProps) => {
+const Page = async ({ params, searchParams }: PageProps) => {
   let slashingEvents = [];
+  const page = Number(searchParams.page) || 1;
   try {
     const { chain: chainName, block } = params;
-    slashingEvents = await getSlashingEvents({ chainName, block });
+    slashingEvents = await getSlashingEvents({ chainName, block, page });
   } catch (error) {
     // most likely an unsupported chain
     if (isPostgrestError(error) && error.code === "PGRST116") {
@@ -33,6 +36,7 @@ const Page = async ({ params }: PageProps) => {
         <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
           <SlashingEvents slashingEvents={slashingEvents} />
         </div>
+        <Pagination page={page} />
       </main>
     </>
   );

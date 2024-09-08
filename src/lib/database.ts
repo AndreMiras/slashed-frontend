@@ -2,6 +2,8 @@ import { cookies } from "next/headers";
 import { PostgrestError } from "@supabase/supabase-js";
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 import { Database } from "@/lib/database.types";
+import { getPagination } from "@/lib/utils";
+import { PAGE_SIZE } from "@/lib/constants";
 
 type SlashingEventsRow = Database["public"]["Tables"]["slashing_events"]["Row"];
 type ChainsRow = Database["public"]["Tables"]["chains"]["Row"];
@@ -70,15 +72,18 @@ const getSlashingEvents = async ({
   chainName = "",
   address = "",
   block = 0,
+  page = 1,
 }: {
   chainName?: string;
   address?: string;
   block?: number;
+  page?: number;
 } = {}): Promise<ExtendedSlashingEventsRow[]> => {
   const cookieStore = cookies();
   const supabase = createServerComponentClient<Database>({
     cookies: () => cookieStore,
   });
+  const { from, to } = getPagination(page, PAGE_SIZE);
   let query = supabase
     .from("slashing_events")
     .select(
@@ -97,7 +102,8 @@ const getSlashingEvents = async ({
       valcons_address
     )`,
     )
-    .order("blocks(time)", { ascending: false });
+    .order("blocks(time)", { ascending: false })
+    .range(from, to);
   if (chainName) {
     const { id: chainId } = await selectChain(chainName);
     query = query.eq("chain_id", chainId);
