@@ -1,0 +1,9 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": "nextjs",
+  "build": {
+    "env": {
+      "NODE_VERSION": "20"
+    }
+  }
+}
