@@ -34,11 +34,8 @@ const handlePostgrestError = (error: PostgrestError | null) => {
 /**
  * Returns a single chain row given a chain name.
  */
-const selectChain = async (name: string) => {
-  const cookieStore = cookies();
-  const supabase = createServerComponentClient<Database>({
-    cookies: () => cookieStore,
-  });
+const selectChain = async (name: string): Promise<ChainsRow> => {
+  const supabase = createServerComponentClient<Database>({ cookies });
   const { data, error } = await supabase
     .from("chains")
     .select("*")
@@ -52,11 +49,8 @@ const selectChain = async (name: string) => {
 /**
  * Returns a single chain row given a chain name.
  */
-const selectChains = async () => {
-  const cookieStore = cookies();
-  const supabase = createServerComponentClient<Database>({
-    cookies: () => cookieStore,
-  });
+const selectChains = async (): Promise<ChainsRow[]> => {
+  const supabase = createServerComponentClient<Database>({ cookies });
   const { data, error } = await supabase
     .from("chains")
     .select("*")
@@ -79,10 +73,7 @@ const getSlashingEvents = async ({
   block?: number;
   page?: number;
 } = {}): Promise<ExtendedSlashingEventsRow[]> => {
-  const cookieStore = cookies();
-  const supabase = createServerComponentClient<Database>({
-    cookies: () => cookieStore,
-  });
+  const supabase = createServerComponentClient<Database>({ cookies });
   const { from, to } = getPagination(page, PAGE_SIZE);
   let query = supabase
     .from("slashing_events")
@@ -131,10 +122,7 @@ const getValidator = async ({
 }: {
   address: string;
 }): Promise<ValidatorsRow> => {
-  const cookieStore = cookies();
-  const supabase = createServerComponentClient<Database>({
-    cookies: () => cookieStore,
-  });
+  const supabase = createServerComponentClient<Database>({ cookies });
   let query = supabase
     .from("validators")
     .select("*")

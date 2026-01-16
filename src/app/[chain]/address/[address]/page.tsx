@@ -10,19 +10,21 @@ import SlashingEvents from "@/app/components/SlashingEvents";
 import Pagination from "@/app/components/Pagination";
 
 interface PageProps {
-  params: {
+  params: Promise<{
     chain: string;
     address: string;
-  };
-  searchParams: { page?: string };
+  }>;
+  searchParams: Promise<{ page?: string }>;
 }
 
 const Page = async ({ params, searchParams }: PageProps) => {
+  const { chain, address } = await params;
+  const { page: pageParam } = await searchParams;
   let slashingEvents = [];
   let validator;
-  const page = Number(searchParams.page) || 1;
+  const page = Number(pageParam) || 1;
   try {
-    const { chain: chainName, address } = params;
+    const chainName = chain;
     slashingEvents = await getSlashingEvents({ chainName, address, page });
     validator = await getValidator({ address });
   } catch (error) {
@@ -36,8 +38,7 @@ const Page = async ({ params, searchParams }: PageProps) => {
   return (
     <>
       <h2>
-        <span className="capitalize">{params.chain}</span> {params.address}{" "}
-        Slashing Events
+        <span className="capitalize">{chain}</span> {address} Slashing Events
       </h2>
       <main className="flex min-h-screen flex-col items-center py-8">
         <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">

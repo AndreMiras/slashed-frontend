@@ -5,11 +5,12 @@ import SlashingEvents from "@/app/components/SlashingEvents";
 import Pagination from "@/app/components/Pagination";
 
 interface Props {
-  searchParams: { page?: string };
+  searchParams: Promise<{ page?: string }>;
 }
 
 const Home = async ({ searchParams }: Props) => {
-  const page = Number(searchParams.page) || 1;
+  const { page: pageParam } = await searchParams;
+  const page = Number(pageParam) || 1;
   const slashingEvents = await getSlashingEvents({ page });
   return (
     <>
